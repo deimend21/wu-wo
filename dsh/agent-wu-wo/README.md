@@ -6,7 +6,45 @@ action per sentence.
 
 ## Install
 
-Clone this repo, then symlink or copy the preset into your dsh profile patches:
+There are two harness versions in the wild; pick the path that matches yours.
+
+### Option A — native agent preset (recommended, harness 0.1.x / `deepseek-harness`)
+
+Harnesses that ship `@deepseek-ai/dsh-agent-presets` (the `deepseek-harness`
+fork family, dsh `0.1.x`) have a native **agent preset** roster: a preset is a
+directory with an `agent.cordis.yml` composition under
+`$DSH_HOME/.agent-presets/`. Install `wu-wo` there:
+
+```sh
+git clone https://github.com/deimend21/wu-wo.git
+mkdir -p ~/.dsh/.agent-presets/wu-wo
+cp wu-wo/dsh/agent-wu-wo/agent.cordis.yml ~/.dsh/.agent-presets/wu-wo/
+cp wu-wo/dsh/agent-wu-wo/preset.yml ~/.dsh/.agent-presets/wu-wo/
+```
+
+`agent.cordis.yml` is the full `standard` coding-agent composition (adapted
+from `deepseek-harness`, MIT) with the wu-wo persona swapped into the
+`persona` row — tools, plan mode, compaction and delegation behave exactly
+like `standard`; only the system prompt changes.
+
+Then start dsh and pick **wu-wo** in the agent picker, or pin it as the
+session default in `~/.dsh/settings.yaml`:
+
+```yaml
+agent-presets:
+  default: wu-wo
+```
+
+> A preset is discoverable immediately — the roster re-reads its roots on
+> every session start, no restart needed. Do NOT write this preset's persona
+> into `cordis.patch.yml`: inserting a second `dsh-system-prompt` /
+> `dsh-agent-loop` instance fails on these harnesses because
+> `systemPrompt` / `agentLoop` are already provided by the base bundle.
+
+### Option B — legacy profile patch (upstream harness)
+
+On upstream DeepSeek Harness (no agent-presets roster), copy the patch into
+your profile's user layer instead:
 
 ```sh
 git clone https://github.com/deimend21/wu-wo.git
@@ -20,43 +58,10 @@ cp dsh/agent-wu-wo/cordis.patch.yml ~/.dsh/profiles/web/cordis.patch.yml
 > [Configuration](https://deepseekdocs.com/en/docs/user-guide/configuration).
 > Adjust the profile name (`web`, `tui`, ...) to match the one you run.
 
-## Selecting the preset
-
-The patch defines a `wu-wo` agent. Select it per session in the UI, or pin it as
-the default route in `~/.dsh/settings.yaml`:
-
-```yaml
-agent-default-model:
-  provider: deepseek-official
-  model: deepseek-v4-flash
-
-# optionally pin the wu-wo persona as the deployment-wide default
-persona: |
-  # First sentence rule (mandatory, highest priority; first rule of this prompt):
-  # the first sentence inside a thinking block must open with an objective,
-  # impersonal statement such as "Need to ..." / "Current state is ..." /
-  # "Goal is ..." / "Problem is ..." / "Steps: ...". Following sentences keep the
-  # same impersonal, process-oriented pattern. Absolutely no personal pronouns
-  # (I, me, we, my, our, Let me, We need, 我, 我们 etc.).
-
-  You are a helpful software engineer assistant. All internal reasoning
-  (chain-of-thought) must follow this egoless style:
-  1. Impersonal core pattern for every sentence. Open with objective statements
-     only. One concrete action or observation per sentence. No first-person or
-     collective pronouns allowed at all.
-  2. Avoid any self-reference. Prefer pure process language: "Need to check...",
-     "Locate the error...", "Apply minimal change...", "Verify the result..."
-  3. Short and concrete. One sentence per step, decision-level summaries only,
-     fully objective perspective.
-  4. Classify every task first. Pick a stable type: build (produce, verify) ·
-     fix (read, locate, minimal change, verify) · weak (classify first, then
-     build or fix).
-  5. Think tag. Write every reasoning step inside the thinking tag.
-  6. Scope. This only shapes internal reasoning. Final replies follow the user's
-     language and tone.
-```
-
-Then start dsh as usual and choose the `wu-wo` agent:
+The patch registers a `wu-wo` agent — select it per session in the UI, or
+pin the persona as the deployment-wide default via the `persona` field of
+`~/.dsh/settings.yaml` (see the full example in the commit history / the
+main README). Then start dsh and choose the `wu-wo` agent:
 
 ```sh
 npx @deepseek-ai/dsh web        # requires Node.js ^22.19.0 or >=24.0.0

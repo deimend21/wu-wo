@@ -56,20 +56,31 @@ npx @deepseek-ai/dsh --profile headless "run the tests"
 ### Recommended — install it as a selectable Agent preset
 
 The repo ships a ready-made dsh **Agent preset** under
-[`dsh/agent-wu-wo/`](dsh/agent-wu-wo/README.md). It registers `wu-wo` as a
-selectable agent mode whose system prompt enforces the egoless reasoning style.
+[`dsh/agent-wu-wo/`](dsh/agent-wu-wo/README.md) in two formats — pick the one
+that matches your harness:
+
+**Native agent preset** (harness 0.1.x / `deepseek-harness`, the
+`@deepseek-ai/dsh-agent-presets` roster): copy the composition into the
+user preset root, then pick **wu-wo** in the UI:
 
 ```sh
 git clone https://github.com/deimend21/wu-wo.git
-cd wu-wo
-mkdir -p ~/.dsh/profiles/web
-cp dsh/agent-wu-wo/cordis.patch.yml ~/.dsh/profiles/web/cordis.patch.yml
+mkdir -p ~/.dsh/.agent-presets/wu-wo
+cp wu-wo/dsh/agent-wu-wo/agent.cordis.yml ~/.dsh/.agent-presets/wu-wo/
+cp wu-wo/dsh/agent-wu-wo/preset.yml ~/.dsh/.agent-presets/wu-wo/
 npx @deepseek-ai/dsh web        # pick the "wu-wo" agent in the UI
 ```
 
-You can also pin it as the deployment-wide default via the `persona` field in
-`~/.dsh/settings.yaml` — see the
-[preset README](dsh/agent-wu-wo/README.md) for the full example.
+Pin it as the default for every new session in `~/.dsh/settings.yaml`:
+
+```yaml
+agent-presets:
+  default: wu-wo
+```
+
+**Legacy profile patch** (upstream harness): copy `cordis.patch.yml` into the
+profile's user layer instead — see the
+[preset README](dsh/agent-wu-wo/README.md) for both full walkthroughs.
 
 ### Alternative — workspace `AGENTS.md`
 
