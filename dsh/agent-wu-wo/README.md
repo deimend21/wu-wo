@@ -22,10 +22,10 @@ cp wu-wo/dsh/agent-wu-wo/agent.cordis.yml ~/.dsh/.agent-presets/wu-wo/
 cp wu-wo/dsh/agent-wu-wo/preset.yml ~/.dsh/.agent-presets/wu-wo/
 ```
 
-`agent.cordis.yml` is the full `standard` coding-agent composition (adapted
-from `deepseek-harness`, MIT) with the wu-wo persona swapped into the
-`persona` row — tools, plan mode, compaction and delegation behave exactly
-like `standard`; only the system prompt changes.
+`agent.cordis.yml` is the `minimal` two-tool composition (adapted from
+`deepseek-harness`, MIT) with the wu-wo persona swapped into the `persona`
+row — a fixed complete prompt, persistent `bash` and `str_replace_editor`
+only. Nothing else: no skills, plan mode, compaction, or delegation.
 
 Then start dsh and pick **wu-wo** in the agent picker, or pin it as the
 session default in `~/.dsh/settings.yaml`:
